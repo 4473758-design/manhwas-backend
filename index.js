@@ -88,6 +88,24 @@ app.post('/productos', (req, res) => {
     );
 });
 
+// Eliminar producto (NUEVO AGREGADO AQUÍ)
+app.delete('/productos/:id', (req, res) => {
+    const { id } = req.params;
+    const sql = 'DELETE FROM productos WHERE id = ?';
+
+    conexion.query(sql, [id], (error, resultado) => {
+        if (error) {
+            return res.status(500).json({ error: error.message });
+        }
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        res.json({ mensaje: 'Producto eliminado correctamente' });
+    });
+});
+
 // Consultar ventas
 app.get('/ventas', (req, res) => {
     const sql = 'SELECT ventas.*, categorias.nombre AS categoria, productos.nombre AS producto FROM ventas INNER JOIN categorias ON ventas.categoria_id = categorias.id INNER JOIN productos ON ventas.producto_id = productos.id';
@@ -166,4 +184,9 @@ app.delete('/ventas/:id', (req, res) => {
 app.listen(PUERTO, () => {
     console.log('Servidor ejecutandose en el puerto ' + PUERTO);
 });
+
+
+
+
+
 
